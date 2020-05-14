@@ -13,15 +13,24 @@ Holds the same information as:
 
 (on the assumption that there have been no pops)
 
-So rather than creating a new version for every push and every pop, we could create a new version only on pops, since it is easy to see what the previous version of a stack that has been pushed to was.
+So rather than creating a new version for every push and every pop, we could create a new version only on pops,
+since it is easy to see what the previous version of a stack that has been pushed to was.
 
-This does mean that finding a particular version would no longer be a simple index look-up. You'd need to iterate through each version until you found the right one.
+This does mean that finding a particular version would no longer be a simple index look-up. You'd need
+to iterate through each version until you found the right one.
 
-Rather than storing a copy of each version, perhaps it would be more memory efficient to store the sequence of update operations. And when a particular version is asked for, we could then re-create that particular version from scratch? This would come at a cost for reading. Each read would require all the update operations to be re-run first.
+Rather than storing a copy of each version, perhaps it would be more memory efficient to store
+the sequence of update operations. And when a particular version is asked for, we could then
+re-create that particular version from scratch? This would come at a cost for reading.
+Each read would require all the update operations to be re-run first.
 
-One solution to this might be to store a) the most recently accessed version r, and b) the sequence of update operations, and c) to make sure all update operations are reversible. Then, if we want to read from version v, rather than iterating through update operations from 0 to v, we could find the 'fastest path' either forwards or backwards from r to v. 
+One solution to this might be to store a) the most recently accessed version r, and
+b) the sequence of update operations, and c) to make sure all update operations are reversible.
+Then, if we want to read from version v, rather than iterating through update operations
+from 0 to v, we could find the 'fastest path' either forwards or backwards from r to v. 
 
-A stack is readily reversible. The reverse of a push is a pop. And the reverse of a pop is to push its return value. If we know the sequence of pushes and pops we can start at any point in that sequence and go back and forth in it.
+A stack is readily reversible. The reverse of a push is a pop. And the reverse of a pop is to push its return value.
+If we know the sequence of pushes and pops we can start at any point in that sequence and go back and forth in it.
 
 Let's implement that as ReversibleStack.
 
