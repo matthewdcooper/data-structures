@@ -1,38 +1,21 @@
-""" This is my naive attempt to make an array the state of which is tracked over time so that you can read elements at any given moment in its history. 
+"""
 
-I'll use a List and I won't worry much about what is stored in the List. However, I will pre-define the persistent List's size. For no other reason than I have an intuition that an arbitrarily sized List may present unexpected challenges (this may be wrong).
-
-By definition the PList class I have created below is 'partially persistent'. It keeps a copy of every list after a change occurs, and it is possible to look through all the states the list has been in. However, a write only ever occurs to the most recent list, and doing so creates a new list. You can't modify previous lists. 
-
-A fully persistent data structure is one where all versions can be accessed and all versions can be modified. 
-
-Having all versions being mutable raises questions about how you would keep track of those changes.
-
-Might be fun to make a couple more classes: a partially persistent stack?
-
-The most obviously limitation of my PartiallyPersistentStack is that every time you push or pop you are increasing memory use by considerably more than just the value you have pushed or popped. Ideally we'd like to be able to do this in a more memory efficient way. 
-
-The other obvious limitation is that it is not fully persistent. What if we want to push or pop a value from a previous version? How could that be done?
-
-One way of improving the memory efficiency of my PartiallyPersistentStack would be to recognise that:
+One way of improving the memory efficiency of the NaiveStack would be to recognise that:
 
 []
 [1]
 [1,2]
 [1,2,3]
 
-Hold the same information as:
+Holds the same information as:
 
 [1, 2, 3]
 
-on the assumption that there have been no pops.
-
+(on the assumption that there have been no pops)
 
 So rather than creating a new version for every push and every pop, we could create a new version only on pops, since it is easy to see what the previous version of a stack that has been pushed to was.
 
-
 This does mean that finding a particular version would no longer be a simple index look-up. You'd need to iterate through each version until you found the right one.
-
 
 Rather than storing a copy of each version, perhaps it would be more memory efficient to store the sequence of update operations. And when a particular version is asked for, we could then re-create that particular version from scratch? This would come at a cost for reading. Each read would require all the update operations to be re-run first.
 
@@ -41,8 +24,6 @@ One solution to this might be to store a) the most recently accessed version r, 
 A stack is readily reversible. The reverse of a push is a pop. And the reverse of a pop is to push its return value. If we know the sequence of pushes and pops we can start at any point in that sequence and go back and forth in it.
 
 Let's implement that as ReversibleStack.
-
-It was easier to implement a SequenceStack first lol.
 
 """
 
@@ -71,7 +52,8 @@ class NaiveStack:
 
 
 class SequenceStack:
-    """ A partially persistent stack that iterates through a subsequence of update operations to return a given version. Saves space but slows down read operations."""
+    """ A partially persistent stack that iterates through a subsequence of update operations
+    to return a given version. Saves space but slows down read operations."""
     def __init__(self):
         self.sequence = [] # the complete sequence of pushes and pops
 
@@ -100,7 +82,12 @@ class SequenceStack:
 
 
 class ReversibleSequenceStack:
-    """ A partially persistent stack that stores the most recently read version and iterates either forwards or backwards through the sequence of update operations to return a requested version. This saves on space (although doubles the space requirements for storing update operations because we are saving both the original and its reverse), and tries to make up for the slow reading operation by reducing how many update operations must be applied to reach the desired version."""
+    """ A partially persistent stack that stores the most recently read version and
+    iterates either forwards or backwards through the sequence of update operations
+    to return a requested version. This saves on space (although doubles the space
+    requirements for storing update operations because we are saving both the original
+    and its reverse), and tries to make up for the slow reading operation by reducing
+    how many update operations must be applied to reach the desired version."""
     def __init__(self):
         self.sequence = [] # the complete sequence of pushes and pops
         self.stack = [] # most recently read version of the stack
